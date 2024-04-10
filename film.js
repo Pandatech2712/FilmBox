@@ -107,13 +107,9 @@ const filmy = [
 
 
 //5.úkol////////////////////////////////
-// Získání id filmu z URL adresy bez mřížky
-const detailFilmuElement = document.querySelector('#detail-filmu')
+const detailFilmuElement = document.querySelector('#detail-filmu');
 
-const idFilmu = location.hash.substring(1)
-
-// Hledání filmu s odpovídajícím id
-const vybranyFilm = filmy.find(film => film.id === idFilmu);
+const idFilmu = location.hash.substring(1);
 
 filmy.forEach((porovnavanyFilm) => {
 	if (porovnavanyFilm.id === idFilmu) {
@@ -128,9 +124,6 @@ const plakat = detailFilmuElement.querySelector('.img-fluid')
 plakat.src = film.plakat.url
 plakat.width = film.plakat.sirka
 plakat.height = film.plakat.vyska
-
-
-
 
 
 
@@ -158,6 +151,3 @@ noteForm.addEventListener('submit', function(event) {
     }
 	noteForm.innerHTML=`<p class="card-text">${messageInput.value}</p>`
 })
-
-
-
