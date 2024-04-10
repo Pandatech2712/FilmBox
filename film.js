@@ -106,25 +106,29 @@ const filmy = [
 ]
 
 
+
 //5.úkol////////////////////////////////
 // Získání id filmu z URL adresy bez mřížky
-const filmId = window.location.hash.slice(1);
+const detailFilmuElement = document.querySelector('#detail-filmu')
+
+const idFilmu = location.hash.substring(1)
 
 // Hledání filmu s odpovídajícím id
-const vybranyFilm = filmy.find(film => film.id === filmId);
+const vybranyFilm = filmy.find(film => film.id === idFilmu);
 
-// Získání potřebných prvků z DOM
-const nazevFilmu = document.querySelector('#detail-filmu .card-title');
-const popisFilmu = document.querySelector('#detail-filmu .card-text');
-const plakatFilmu = document.querySelector('#detail-filmu .card-img-top');
+filmy.forEach((porovnavanyFilm) => {
+	if (porovnavanyFilm.id === idFilmu) {
+		film = porovnavanyFilm
+	}
+});
 
+detailFilmuElement.querySelector('.card-title').textContent = film.nazev;
+detailFilmuElement.querySelector('.card-text').textContent = film.popis;
 
-// Vložení informací o filmu do DOM
-nazevFilmu.textContent = vybranyFilm.nazev;
-popisFilmu.textContent = vybranyFilm.popis;
-plakatFilmu.src = vybranyFilm.plakat.url;
-plakatFilmu.width = vybranyFilm.plakat.sirka;
-plakatFilmu.height = vybranyFilm.plakat.vyska;
+const plakat = detailFilmuElement.querySelector('.img-fluid')
+plakat.src = film.plakat.url
+plakat.width = film.plakat.sirka
+plakat.height = film.plakat.vyska
 
 
 
@@ -133,96 +137,42 @@ plakatFilmu.height = vybranyFilm.plakat.vyska;
 
 
 //7.úkol////////////////////////////////
-// Pomocná funkce pro zvýraznění určitého počtu hvězdiček
-function highlightStars(count) {
-    const stars = document.querySelectorAll('.fa-star');
-    stars.forEach((star, index) => {
-        if (index < count) {
-            star.classList.remove('far');
-            star.classList.add('fas');
-        } else {
-            star.classList.remove('fas');
-            star.classList.add('far');
-        }
-    });
-}
-
-// Událost po kliknutí na hvězdičku
-function starClick(event) {
-    const clickedStar = event.target;
-    const starIndex = parseInt(clickedStar.textContent);
-
-    // Zvýraznění hvězdiček podle kliknuté pozice
-    highlightStars(starIndex);
-
-    // Poznámka, kolikátá to byla hvězdička
-    console.log(`Uživatel kliknul na ${starIndex}. hvězdičku.`);
-}
-
-// Událost při přejetí myší nad hvězdičkami
-function starHover(event) {
-    const hoveredStar = event.target;
-    const starIndex = parseInt(hoveredStar.textContent);
-
-    // Zvýraznění hvězdiček podle pozice myši
-    highlightStars(starIndex);
-}
-
-// Událost po odjetí myši z oblasti hvězdiček
-function resetStars() {
-    // Zvýraznění hvězdiček podle poslední kliknuté pozice
-    // Poznámka: Pokud uživatel ještě neklikl, zůstanou hvězdičky ve výchozím stavu
-    const lastClickedStarIndex = parseInt(document.querySelector('.fas').textContent);
-    highlightStars(lastClickedStarIndex);
-}
-
-// Přidání posluchačů událostí na všechny hvězdičky
-const stars = document.querySelectorAll('.fa-star');
-stars.forEach(star => {
-    star.addEventListener('click', starClick);
-    star.addEventListener('mouseenter', starHover);
-});
-// Přidání posluchače události mouseleave na rodičovský prvek hvězdiček
-const starsContainer = document.querySelector('.stars');
-starsContainer.addEventListener('mouseleave', resetStars);
 
 
 //8.úkol/////////////////////////////////
-document.addEventListener('DOMContentLoaded', () => {
-    const noteForm = document.querySelector('#note-form');
+// Přidání posluchače události odeslání formuláře
+const noteForm = document.querySelector('#note-form');
+noteForm.addEventListener('submit', function(event) {
+    event.preventDefault(); // Zamezení výchozího chování prohlížeče
 
-    noteForm.addEventListener('submit', (event) => {
+    const messageInput = document.querySelector('#message-input');
+    const termsCheckbox = document.querySelector('#terms-checkbox');
 
-        // Ověření, zda uživatel něco napsal do textového pole
-        const messageInput = document.querySelector('#message-input');
-        const message = messageInput.value.trim(); // Odstranění bílých znaků ze začátku a konce
+    // Ověření, zda uživatel napsal poznámku a souhlasil s podmínkami
+    if (messageInput.value.trim() === '' || !termsCheckbox.checked) {
+        messageInput.classList.toggle('is-invalid', messageInput.value.trim() === ''); // Zvýraznění textového pole
+        termsCheckbox.classList.toggle('is-invalid', !termsCheckbox.checked); // Zvýraznění checkboxu
 
-        if (message === '') {
-            // Přidání třídy is-invalid a zaměření na pole pro psaní
-            messageInput.classList.add('is-invalid');
-            messageInput.focus();
-            return; // Zastavení dalšího vykonávání kódu
+        if (messageInput.value.trim() === '') {
+            messageInput.focus(); // Zaměření na textové pole
         } else {
-            // Odebrání třídy is-invalid, pokud byla přidána při předchozím odeslání
-            messageInput.classList.remove('is-invalid');
+            termsCheckbox.focus(); // Zaměření na checkbox
         }
+        
+        return; // Zastavení pokračování funkce, aby nedošlo k dalšímu vyhodnocení
+    }
 
-        // Ověření, zda uživatel zaškrtl souhlas s podmínkami
-        const termsCheckbox = document.querySelector('#terms-checkbox');
-        if (!termsCheckbox.checked) {
-            // Přidání třídy is-invalid
-            termsCheckbox.classList.add('is-invalid');
-            termsCheckbox.focus();
-            return; // Zastavení dalšího vykonávání kódu
-        } else {
-            // Odebrání třídy is-invalid, pokud byla přidána při předchozím odeslání
-            termsCheckbox.classList.remove('is-invalid');
-        }
+    // Vytvoření odstavce s textem poznámky
+    const noteText = messageInput.value;
+    const noteParagraph = document.createElement('p');
+    noteParagraph.classList.add('card-text');
+    noteParagraph.textContent = noteText;
 
-        // Nahrazení HTML obsahu formuláře za odstavec s textem z textového pole
-        const formContainer = noteForm.parentElement;
-        const newParagraph = document.createElement('p');
-        newParagraph.classList.add('card-text');
+    // Nahrazení formuláře odstavcem s poznámkou
+    const cardBody = document.querySelector('.card-body');
+    const formContainer = document.querySelector('.row');
+    cardBody.replaceChild(noteParagraph, formContainer);
+});
         newParagraph.textContent = message;
         formContainer.replaceChild(newParagraph, noteForm);
     });
