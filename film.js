@@ -106,7 +106,6 @@ const filmy = [
 ]
 
 
-
 //5.úkol////////////////////////////////
 // Získání id filmu z URL adresy bez mřížky
 const detailFilmuElement = document.querySelector('#detail-filmu')
@@ -132,11 +131,7 @@ plakat.height = film.plakat.vyska
 
 
 
-//6.úkol////////////////////////////////
 
-
-
-//7.úkol////////////////////////////////
 
 
 //8.úkol/////////////////////////////////
@@ -149,7 +144,7 @@ noteForm.addEventListener('submit', function(event) {
     const termsCheckbox = document.querySelector('#terms-checkbox');
 
     // Ověření, zda uživatel napsal poznámku a souhlasil s podmínkami
-    if (messageInput.value.trim() === '' || !termsCheckbox.checked) {
+    if (messageInput.value.length === 0 || !termsCheckbox.checked) {
         messageInput.classList.toggle('is-invalid', messageInput.value.trim() === ''); // Zvýraznění textového pole
         termsCheckbox.classList.toggle('is-invalid', !termsCheckbox.checked); // Zvýraznění checkboxu
 
@@ -161,19 +156,8 @@ noteForm.addEventListener('submit', function(event) {
         
         return; // Zastavení pokračování funkce, aby nedošlo k dalšímu vyhodnocení
     }
+	noteForm.innerHTML=`<p class="card-text">${messageInput.value}</p>`
+})
 
-    // Vytvoření odstavce s textem poznámky
-    const noteText = messageInput.value;
-    const noteParagraph = document.createElement('p');
-    noteParagraph.classList.add('card-text');
-    noteParagraph.textContent = noteText;
 
-    // Nahrazení formuláře odstavcem s poznámkou
-    const cardBody = document.querySelector('.card-body');
-    const formContainer = document.querySelector('.row');
-    cardBody.replaceChild(noteParagraph, formContainer);
-});
-        newParagraph.textContent = message;
-        formContainer.replaceChild(newParagraph, noteForm);
-    });
-});
+
